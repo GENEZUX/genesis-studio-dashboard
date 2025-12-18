@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genesis Studio - Advanced Monitoring Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
     <div class="w-full min-h-screen p-6 overflow-auto">
@@ -61,19 +62,19 @@
 
         <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- Usage Chart -->
+            <!-- API Usage Chart -->
             <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur-xl">
-                <h3 class="text-lg font-semibold text-slate-100 mb-4">API Usage (Last 24h)</h3>
+                <h3 class="text-lg font-semibold text-slate-100 mb-4">API Usage Trends</h3>
                 <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
-                    <p class="text-slate-500">📊 Usage Chart Placeholder</p>
+                    <canvas id="apiUsageChart"></canvas>
                 </div>
             </div>
 
-            <!-- Cost Breakdown -->
+            <!-- Cost Breakdown Chart -->
             <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur-xl">
                 <h3 class="text-lg font-semibold text-slate-100 mb-4">Cost Breakdown</h3>
                 <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
-                    <p class="text-slate-500">💰 Cost Breakdown Placeholder</p>
+                    <canvas id="costBreakdownChart"></canvas>
                 </div>
             </div>
         </div>
@@ -83,5 +84,110 @@
             <p>Genesis Studio v1.0 • Real-time AI API Monitoring</p>
         </div>
     </div>
+
+    <script>
+        // API Usage Chart
+        const apiCtx = document.getElementById('apiUsageChart').getContext('2d');
+        const apiUsageChart = new Chart(apiCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: 'Total Requests',
+                    data: [500, 750, 1200, 1500, 1100, 1800, 2500, 2200, 3100, 2900, 3500, 3800],
+                    borderColor: 'rgba(52, 211, 235, 1)',
+                    backgroundColor: 'rgba(52, 211, 235, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: 'rgba(52, 211, 235, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    filler: {
+                        propagate: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cost Breakdown Chart
+        const costCtx = document.getElementById('costBreakdownChart').getContext('2d');
+        const costBreakdownChart = new Chart(costCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['API Calls', 'Storage', 'Bandwidth', 'Premium'],
+                datasets: [{
+                    data: [45, 20, 20, 15],
+                    backgroundColor: [
+                        'rgba(52, 211, 235, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(245, 158, 11, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(52, 211, 235, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(245, 158, 11, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 12
+                            },
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

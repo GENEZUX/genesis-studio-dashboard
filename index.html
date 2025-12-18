@@ -177,9 +177,12 @@
             }
         }
 
-        // Initialize on DOM ready
-        document.addEventListener('DOMContentLoaded', renderDashboard);
-
+                // Initialize dashboard
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', renderDashboard);
+        } else {
+            renderDashboard();
+        }
         // Future: Fetch from /api/dashscope/usage
         // async function fetchDashboardMetrics() {
         //   try {

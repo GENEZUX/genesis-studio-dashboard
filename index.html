@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis Studio - Advanced Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div class="w-full min-h-screen p-6 overflow-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                Genesis Studio
+            </h1>
+            <p class="text-slate-400">Advanced Monitoring & Analytics Dashboard</p>
+        </div>
+
+        <!-- Time Range Controls -->
+        <div class="flex gap-4 mb-8 flex-wrap">
+            <div class="flex gap-2">
+                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-cyan-500/30 border border-cyan-400 text-cyan-300 hover:bg-cyan-500/40">1h</button>
+                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600">24h</button>
+                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600">7d</button>
+                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-600">30d</button>
+            </div>
+        </div>
+
+        <!-- Main Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <!-- Total Requests -->
+            <div class="bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 border border-cyan-500/50 rounded-lg p-6 backdrop-blur-xl">
+                <p class="text-slate-400 text-sm mb-2">Total Requests</p>
+                <p class="text-2xl font-bold text-cyan-300">15,847</p>
+            </div>
+
+            <!-- Total Cost -->
+            <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/50 rounded-lg p-6 backdrop-blur-xl">
+                <p class="text-slate-400 text-sm mb-2">Total Cost</p>
+                <p class="text-2xl font-bold text-purple-300">$2,847.50</p>
+            </div>
+
+            <!-- Avg Latency -->
+            <div class="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/50 rounded-lg p-6 backdrop-blur-xl">
+                <p class="text-slate-400 text-sm mb-2">Avg Latency</p>
+                <p class="text-2xl font-bold text-green-300">245ms</p>
+            </div>
+
+            <!-- Error Rate -->
+            <div class="bg-gradient-to-br from-red-500/20 to-red-600/10 border border-red-500/50 rounded-lg p-6 backdrop-blur-xl">
+                <p class="text-slate-400 text-sm mb-2">Error Rate</p>
+                <p class="text-2xl font-bold text-red-300">0.8%</p>
+            </div>
+
+            <!-- Uptime -->
+            <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/50 rounded-lg p-6 backdrop-blur-xl">
+                <p class="text-slate-400 text-sm mb-2">Uptime</p>
+                <p class="text-2xl font-bold text-yellow-300">99.9%</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Usage Chart -->
+            <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur-xl">
+                <h3 class="text-lg font-semibold text-slate-100 mb-4">API Usage (Last 24h)</h3>
+                <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
+                    <p class="text-slate-500">📊 Usage Chart Placeholder</p>
+                </div>
+            </div>
+
+            <!-- Cost Breakdown -->
+            <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur-xl">
+                <h3 class="text-lg font-semibold text-slate-100 mb-4">Cost Breakdown</h3>
+                <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
+                    <p class="text-slate-500">💰 Cost Breakdown Placeholder</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-slate-500 text-sm">
+            <p>Genesis Studio v1.0 • Real-time AI API Monitoring</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,199 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genesis Studio - Advanced Monitoring Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Genesis Studio - Advanced Monitoring Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f0f15 0%, #1a1a25 100%);
+      color: #e0e0ff;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #6a5af9 0%, #4dd9ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      color: #999;
+      font-size: 1rem;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .metric-card {
+      background: rgba(26, 26, 37, 0.8);
+      border: 1px solid rgba(106, 90, 249, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .metric-card:hover {
+      border-color: rgba(106, 90, 249, 0.5);
+      transform: translateY(-2px);
+      background: rgba(26, 26, 37, 1);
+    }
+    .metric-card h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
+    }
+    .metric-card p {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #4dd9ff;
+    }
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 1024px) {
+      .charts { grid-template-columns: 1fr; }
+    }
+    .chart-container {
+      background: rgba(26, 26, 37, 0.8);
+      border: 1px solid rgba(106, 90, 249, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    .chart-title {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    #usageChart, #costChart {
+      position: relative;
+      height: 300px;
+    }
+    .footer {
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(106, 90, 249, 0.1);
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-    <div class="w-full min-h-screen p-6 overflow-auto">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Genesis Studio</h1>
-            <p class="text-slate-400">Advanced Monitoring & Analytics Dashboard</p>
-        </div>
-
-        <!-- Time Range Controls -->
-        <div class="flex gap-4 mb-8 flex-wrap">
-            <div class="flex gap-2">
-                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-cyan-500/30 border border-cyan-400 text-cyan-300 hover:bg-cyan-500/50">24H</button>
-                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:bg-slate-700/50">7D</button>
-                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:bg-slate-700/50">30D</button>
-                <button class="px-4 py-2 rounded-lg font-medium transition-all bg-slate-800/50 border border-slate-700 text-slate-400 hover:bg-slate-700/50">90D</button>
-            </div>
-        </div>
-
-        <!-- Metrics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <!-- Total Requests -->
-            <div class="bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 border border-cyan-500/50 rounded-lg p-6 backdrop-blur">
-                <p class="text-slate-400 text-sm mb-2">Total Requests</p>
-                <p id="total-requests" class="text-2xl font-bold text-cyan-300">--</p>
-            </div>
-            <!-- Total Cost -->
-            <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/50 rounded-lg p-6 backdrop-blur">
-                <p class="text-slate-400 text-sm mb-2">Total Cost</p>
-                <p id="total-cost" class="text-2xl font-bold text-purple-300">--</p>
-            </div>
-            <!-- Avg Latency -->
-            <div class="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/50 rounded-lg p-6 backdrop-blur">
-                <p class="text-slate-400 text-sm mb-2">Avg Latency</p>
-                <p id="avg-latency" class="text-2xl font-bold text-green-300">--</p>
-            </div>
-            <!-- Error Rate -->
-            <div class="bg-gradient-to-br from-red-500/20 to-red-600/10 border border-red-500/50 rounded-lg p-6 backdrop-blur">
-                <p class="text-slate-400 text-sm mb-2">Error Rate</p>
-                <p id="error-rate" class="text-2xl font-bold text-red-300">--</p>
-            </div>
-            <!-- Uptime -->
-            <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/50 rounded-lg p-6 backdrop-blur">
-                <p class="text-slate-400 text-sm mb-2">Uptime</p>
-                <p id="uptime" class="text-2xl font-bold text-yellow-300">--</p>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- API Usage Chart -->
-            <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur">
-                <h3 class="text-lg font-semibold text-slate-100 mb-4">API Usage Trends</h3>
-                <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
-                    <canvas id="apiUsageChart"></canvas>
-                </div>
-            </div>
-            <!-- Cost Breakdown Chart -->
-            <div class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-lg p-6 backdrop-blur">
-                <h3 class="text-lg font-semibold text-slate-100 mb-4">Cost Breakdown</h3>
-                <div class="h-64 bg-slate-900/30 rounded-lg flex items-center justify-center">
-                    <canvas id="costBreakdownChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center text-slate-500 text-sm">
-            <p>Genesis Studio v1.0 • Real-time AI API Monitoring</p>
-        </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Genesis Studio</h1>
+      <p>Advanced Monitoring & Analytics Dashboard</p>
     </div>
 
-    <script>
-        // Dashboard Data Module
-        const dashboardData = {
-            metrics: {
-                totalRequests: 42857,
-                totalCost: '$2,847.50',
-                avgLatency: '245ms',
-                errorRate: '0.8%',
-                uptime: '99.9%'
+    <div class="metrics">
+      <div class="metric-card">
+        <h3>Total Requests</h3>
+        <p id="total-requests">--</p>
+      </div>
+      <div class="metric-card">
+        <h3>Total Cost</h3>
+        <p id="total-cost">--</p>
+      </div>
+      <div class="metric-card">
+        <h3>Avg Latency</h3>
+        <p id="avg-latency">--</p>
+      </div>
+      <div class="metric-card">
+        <h3>Error Rate</h3>
+        <p id="error-rate">--</p>
+      </div>
+      <div class="metric-card">
+        <h3>Uptime</h3>
+        <p id="uptime">--</p>
+      </div>
+    </div>
+
+    <div class="charts">
+      <div class="chart-container">
+        <h3 class="chart-title">API Usage Trends</h3>
+        <canvas id="usageChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h3 class="chart-title">Cost Breakdown (Alibaba Cloud)</h3>
+        <canvas id="costChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Genesis Studio v2.0 - Real-time AI API Monitoring - Powered by Alibaba Cloud DashScope
+  </div>
+
+  <script>
+    const dashboardData = {
+      metrics: {
+        totalRequests: 15847,
+        totalCost: 2847.5,
+        avgLatency: 245,
+        errorRate: 0.8,
+        uptime: 99.9
+      },
+      costBreakdown: [
+        { model: 'Qwen3-Max', cost: 1420.00, color: '#6a5af9' },
+        { model: 'Qwen3-Coder', cost: 570.50, color: '#4dd9ff' },
+        { model: 'Tongyi Wanxiang', cost: 427.00, color: '#00d084' },
+        { model: 'Qwen-Omni', cost: 284.75, color: '#ffa500' },
+        { model: 'Others (ASR/Embed)', cost: 145.25, color: '#ff6b9d' }
+      ],
+      usageTrends: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        requests: [2100, 2300, 1900, 2400, 2600, 1800, 2747]
+      }
+    };
+
+    let usageChartInstance = null;
+    let costChartInstance = null;
+
+    function renderDashboard(data) {
+      const { metrics, costBreakdown, usageTrends } = data;
+
+      document.getElementById('total-requests').textContent = metrics.totalRequests.toLocaleString();
+      document.getElementById('total-cost').textContent = '$' + metrics.totalCost.toFixed(2);
+      document.getElementById('avg-latency').textContent = metrics.avgLatency + 'ms';
+      document.getElementById('error-rate').textContent = metrics.errorRate + '%';
+      document.getElementById('uptime').textContent = metrics.uptime + '%';
+
+      renderUsageChart(usageTrends);
+      renderCostChart(costBreakdown);
+    }
+
+    function renderUsageChart(data) {
+      const ctx = document.getElementById('usageChart').getContext('2d');
+      if (usageChartInstance) usageChartInstance.destroy();
+      usageChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'API Requests',
+            data: data.requests,
+            borderColor: '#6a5af9',
+            backgroundColor: 'rgba(106, 90, 249, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: '#6a5af9',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(106, 90, 249, 0.1)' },
+              ticks: { color: '#999' }
             },
-            costBreakdown: [
-                { label: 'API Calls', value: 45 },
-                { label: 'Storage', value: 25 },
-                { label: 'Compute', value: 20 },
-                { label: 'Other', value: 10 }
-            ],
-            usageTrends: {
-                labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
-                datasets: [{
-                    label: 'Total Requests',
-                    data: [500, 750, 1200, 1500, 1100, 1800, 2500, 2200, 3100, 2900, 3500, 3800]
-                }]
+            x: {
+              grid: { display: false },
+              ticks: { color: '#999' }
             }
-        };
-
-        // Render Dashboard Function
-        function renderDashboard() {
-            // Update metrics
-            document.getElementById('total-requests')?.textContent =
-                dashboardData.metrics.totalRequests?.toLocaleString() || '--';
-            document.getElementById('total-cost')?.textContent =
-                dashboardData.metrics.totalCost || '--';
-            document.getElementById('avg-latency')?.textContent =
-                dashboardData.metrics.avgLatency || '--';
-            document.getElementById('error-rate')?.textContent =
-                dashboardData.metrics.errorRate || '--';
-            document.getElementById('uptime')?.textContent =
-                dashboardData.metrics.uptime || '--';
-
-            // Render API Usage Chart
-            const apiCtx = document.getElementById('apiUsageChart')?.getContext('2d');
-            if (apiCtx) {
-                new Chart(apiCtx, {
-                    type: 'line',
-                    data: {
-                        labels: dashboardData.usageTrends.labels,
-                        datasets: [{
-                            label: 'Total Requests',
-                            data: dashboardData.usageTrends.datasets[0].data,
-                            borderColor: 'rgba(52, 211, 235, 1)',
-                            backgroundColor: 'rgba(52, 211, 235, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: 'rgba(52, 211, 235, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
-            }
-
-            // Render Cost Breakdown Chart
-            const costCtx = document.getElementById('costBreakdownChart')?.getContext('2d');
-            if (costCtx) {
-                new Chart(costCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: dashboardData.costBreakdown.map(item => item.label),
-                        datasets: [{
-                            data: dashboardData.costBreakdown.map(item => item.value),
-                            backgroundColor: [
-                                'rgba(52, 211, 235, 1)',
-                                'rgba(139, 92, 246, 1)',
-                                'rgba(34, 197, 94, 1)',
-                                'rgba(245, 158, 11, 1)'
-                            ],
-                            borderWidth: 2,
-                            borderColor: 'rgba(15, 23, 42, 1)'
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        responsive: true,
-                        plugins: { legend: { position: 'bottom' } }
-                    }
-                });
-            }
+          }
         }
+      });
+    }
 
-                // Initialize dashboard
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', renderDashboard);
-        } else {
-            renderDashboard();
+    function renderCostChart(data) {
+      const ctx = document.getElementById('costChart').getContext('2d');
+      if (costChartInstance) costChartInstance.destroy();
+      costChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.map(item => item.model),
+          datasets: [{
+            data: data.map(item => item.cost),
+            backgroundColor: data.map(item => item.color),
+            borderColor: '#1a1a25',
+            borderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#999', padding: 15 }
+            }
+          }
         }
-        // Future: Fetch from /api/dashscope/usage
-        // async function fetchDashboardMetrics() {
-        //   try {
-        //     const response = await fetch('/api/dashscope/usage');
-        //     const data = await response.json();
-        //     Object.assign(dashboardData, data);
-        //     renderDashboard();
-        //   } catch (error) {
-        //     console.error('Failed to fetch metrics:', error);
-        //   }
-        // }
-    </script>
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDashboard(dashboardData);
+    });
+  </script>
 </body>
 </html>
